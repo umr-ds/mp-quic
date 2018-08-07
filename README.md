@@ -48,6 +48,36 @@ Take a look at [this echo example](example/echo/echo.go).
 
     go run example/client/main.go https://clemente.io
 
+
+## mp-quic
+
+Install mp-quic using the following commands:
+
+```bash
+# Get upstream quic-go code
+go get github.com/lucas-clemente/quic-go
+
+# Add the mp-quic remote and checkout to the prototype branch
+cd $GOPATH/src/github.com/lucas-clemente/quic-go
+git remote add mp-quic git@github.com:umr-ds/mp-quic.git
+git fetch mp-quic && git checkout conext17
+
+# Download all dependency packages
+go get -t -u ./...
+```
+
+If a build error like *mc.conn.State undefined* occurs, an older version of *github.com/bifurcation/mint* can be checked out:
+
+```bash
+cd $GOPATH/src/github.com/bifurcation/mint
+git reset --hard a6080d464fb57a9330c2124ffb62f3c233e3400e
+
+# Check that no more build issues arise
+cd $GOPATH/src/github.com/lucas-clemente/quic-go
+go build
+# This should not produce any outputw
+```
+
 ## Usage
 
 ### As a server
