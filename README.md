@@ -78,6 +78,24 @@ go build
 # This should not produce any outputw
 ```
 
+### mp-quic on android
+
+```bash
+# install and init gomobile
+go get golang.org/x/mobile/cmd/gomobile
+gomobile init
+
+# compile
+cd $GOPATH/src/github.com/lucas-clemente/quic-go
+CC="$NDK_ROOT/bin/arm-linux-androideabi-gcc" GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -v -o quic-example-client example/client/main.go
+
+# install compiled binary
+adb push quic-example-client /sdcard
+adb shell 'su -c "mount -o remount,rw /system"'
+adb shell 'su -c "cp /sdcard/quic-example-client /system/bin/quic-example-client"'
+adb shell 'su -c "chmod 700 /system/bin/quic-example-client"'
+```
+
 ## Usage
 
 ### As a server
