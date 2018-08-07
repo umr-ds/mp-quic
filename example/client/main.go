@@ -65,7 +65,7 @@ func main() {
 				panic(err)
 			}
 			utils.Infof("Request Body:")
-			fmt.Print("%s", body.Bytes())
+			fmt.Print(string(body.Bytes()))
 			wg.Done()
 		}(addr)
 	}
