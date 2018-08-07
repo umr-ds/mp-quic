@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -64,7 +65,7 @@ func main() {
 				panic(err)
 			}
 			utils.Infof("Request Body:")
-			utils.Infof("%s", body.Bytes())
+			fmt.Print("%s", body.Bytes())
 			wg.Done()
 		}(addr)
 	}
