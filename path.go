@@ -5,10 +5,10 @@ import (
 
 	"github.com/lucas-clemente/quic-go/ackhandler"
 	"github.com/lucas-clemente/quic-go/congestion"
-	"github.com/lucas-clemente/quic-go/qerr"
 	"github.com/lucas-clemente/quic-go/internal/protocol"
 	"github.com/lucas-clemente/quic-go/internal/utils"
 	"github.com/lucas-clemente/quic-go/internal/wire"
+	"github.com/lucas-clemente/quic-go/qerr"
 )
 
 const (
@@ -33,7 +33,7 @@ type path struct {
 
 	potentiallyFailed utils.AtomicBool
 
-	sentPacket          chan struct{}
+	sentPacket chan struct{}
 
 	// It is now the responsibility of the path to keep its packet number
 	packetNumberGenerator *packetNumberGenerator
@@ -47,18 +47,21 @@ type path struct {
 
 	lastNetworkActivityTime time.Time
 
-	timer           *utils.Timer
+	timer *utils.Timer
 }
 
 // setup initializes values that are independent of the perspective
-func (p *path) setup(oliaSenders map[protocol.PathID]*congestion.OliaSender) {
+// func (p *path) setup(oliaSenders map[protocol.PathID]*congestion.OliaSender) {
+func (p *path) setup(oliaSenders map[protocol.PathID]*congestion.CubicSender) {
 	p.rttStats = &congestion.RTTStats{}
 
 	var cong congestion.SendAlgorithm
 
 	if p.sess.version >= protocol.VersionMP && oliaSenders != nil && p.pathID != protocol.InitialPathID {
-		cong = congestion.NewOliaSender(oliaSenders, p.rttStats, protocol.InitialCongestionWindow, protocol.DefaultMaxCongestionWindow)
-		oliaSenders[p.pathID] = cong.(*congestion.OliaSender)
+		// cong = congestion.NewOliaSender(oliaSenders, p.rttStats, protocol.InitialCongestionWindow, protocol.DefaultMaxCongestionWindow)
+		cong = congestion.NewCubicSender(congestion.DefaultClock{}, p.rttStats, false, protocol.InitialCongestionWindow, protocol.DefaultMaxCongestionWindow)
+
+		oliaSenders[p.pathID] = cong.(*congestion.CubicSender)
 	}
 
 	sentPacketHandler := ackhandler.NewSentPacketHandler(p.rttStats, cong, p.onRTO)

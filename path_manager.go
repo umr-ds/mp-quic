@@ -24,7 +24,7 @@ type pathManager struct {
 	advertisedLocAddrs map[string]bool
 
 	// TODO (QDC): find a cleaner way
-	oliaSenders map[protocol.PathID]*congestion.OliaSender
+	oliaSenders map[protocol.PathID]*congestion.CubicSender
 
 	handshakeCompleted chan struct{}
 	runClosed          chan struct{}
@@ -49,7 +49,7 @@ func (pm *pathManager) setup(conn connection) {
 	pm.timer = time.NewTimer(0)
 	pm.nbPaths = 0
 
-	pm.oliaSenders = make(map[protocol.PathID]*congestion.OliaSender)
+	pm.oliaSenders = make(map[protocol.PathID]*congestion.CubicSender)
 
 	// Setup the first path of the connection
 	pm.sess.paths[protocol.InitialPathID] = &path{
